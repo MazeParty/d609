@@ -1,24 +1,61 @@
-import os
-import pandas as pd
+"""Utility to convert newline separated JSON objects to valid JSON arrays."""
 
-def clean_json():
-    root_dir = os.path.dirname("/Users/jimilburkhart/Programming/Python/WGU Code/D609 Udacity/")
+from __future__ import annotations
 
-    directories = [directory for directory in os.listdir(os.path.dirname(f"{root_dir}\\step_trainer\\landing"))]
+import json
+import re
+from pathlib import Path
 
-    print(directories)
 
-    for file in directories:
-        with open(f"{root_dir}\\{file}", "r+") as customer_file:
-            customers = customer_file.readlines()
-            for customer in customers:
-                customers = customer.replace("}{", "},{")
-            customer_file.seek(0)
-            customer_file.write("[")
-            for customer in customers:
-                customer_file.write(customer)
-            customer_file.seek(0, 2)
-            customer_file.write("]")
+def _clean_file(path: Path) -> None:
+    """Rewrite the file as a JSON array if it isn't already."""
+
+    # Read and trim whitespace so we can easily detect existing arrays
+    content = path.read_text().strip()
+    if not content:
+        return
+
+    # Even if the file already looks like a JSON array we attempt to reparse
+    # it to handle potential corruption.
+
+    # Extract every JSON object from the text. This handles files where
+    # objects are separated by newlines, concatenated, or interspersed with
+    # random characters.
+    objs = []
+    for match in re.finditer(r"\{[^{}]*\}", content):
+        obj_text = match.group(0)
+        try:
+            json.loads(obj_text)
+            objs.append(obj_text)
+        except json.JSONDecodeError:
+            continue
+
+    if not objs:
+        return
+
+    new_content = "[" + ",".join(objs) + "]"
+
+    path.write_text(new_content)
+
+
+def clean_json() -> None:
+    """Clean all landing zone JSON files in this repository."""
+
+    landing_dirs = [
+        Path("customer") / "landing",
+        Path("accelerometer") / "landing",
+        Path("step_trainer") / "landing",
+    ]
+
+    for directory in landing_dirs:
+        if not directory.exists():
+            continue
+        for file in directory.iterdir():
+            if file.suffix.lower() != ".json":
+                continue
+            _clean_file(file)
+
 
 if __name__ == "__main__":
     clean_json()
+
