@@ -3,7 +3,7 @@
 
 # ASSUME all S3 directories are made and only the landing zone directories contain json data. Namely /customerlanding, /steptrainerlanding, and /accelerometerlanding
 
-from transformjson import transform
+from clean_pre_landing import clean_json
 from accelerometer_landing_to_trusted import clean_accel_data
 from customer_landing_to_trusted import clean_customer_data
 from step_trainer_trusted import clean_steptrainer_data
@@ -12,12 +12,13 @@ from machine_learning_curated import machine_learning_to_curated
 
 #1. Get step trainer data and make it the correct format executing on our local pc
 
-transform()
+clean_json()
 
 #2. Upload step trainer data to S3 bucket by clicking upload in AWS S3
 
-#3. Now that all JSON data in S3 is legible, we will make the SQL Landing Zone Tables executing via copy paste in AWS Athena 
+#3. Now that all JSON data in S3 is legible, we will make the SQL Database and SQL Landing Zone Tables executing via copy paste in AWS Athena 
 
+#execute create_db.sql
 #execute accelerometer_landing.sql
 #execute customer_landing.sql
 #execute step_trainer_landing.sql
