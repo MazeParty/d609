@@ -43,4 +43,4 @@ def customer_trusted_to_curated():
     accelerometer_drop_customer_columns = accelerometer_join_customers.drop(*customers.columns)
 
     # save to accelerometertrusted
-    accelerometer_drop_customer_columns.write.mode("overwrite").parquet("s3://accelerometerlanding69/accelerometertrusted/")
+    accelerometer_drop_customer_columns.write.mode("overwrite").parquet("s3://customerlanding69/customercurated/")
