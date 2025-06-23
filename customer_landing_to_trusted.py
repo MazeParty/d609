@@ -1,5 +1,6 @@
 import sys
 from awsglue.transforms import *
+#from awsglue.transforms import Filter
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 from awsglue.context import GlueContext
@@ -43,7 +44,7 @@ def clean_customer_data():
         transformation_ctx="TrustedCustomerZone_node3",
     )
     TrustedCustomerZone_node3.setCatalogInfo(
-        catalogDatabase="stedi", catalogTableName="customers_trusted"
+        catalogDatabase="sensor_data", catalogTableName="customer_trusted"
     )
     TrustedCustomerZone_node3.setFormat("json")
     TrustedCustomerZone_node3.writeFrame(trusted_zone_data)
