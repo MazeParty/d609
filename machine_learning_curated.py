@@ -33,3 +33,4 @@ def machine_learning_to_curated():
                     "inner")
 
     machine_learning_curated.write.mode("overwrite").parquet("s3://machinelearning69/machinelearningcurated/")
+machine_learning_to_curated()
